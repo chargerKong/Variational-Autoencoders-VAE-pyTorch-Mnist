@@ -94,12 +94,13 @@ except:
         
 ''''模型训练、测试、展示''' #如上一步已导入本地模型，可省略本步骤，直接进行 模型推理
 '准备mnist数据集' #(数据会下载到py文件所在的data文件夹下)
+print("start download datasets")
 train_loader = torch.utils.data.DataLoader(
-    datasets.MNIST('/data', train=True, download=True,
+    datasets.MNIST('./data', train=True, download=True,
                    transform=transforms.ToTensor()),
     batch_size=batch_size, shuffle=True)
 test_loader = torch.utils.data.DataLoader(
-    datasets.MNIST('/data', train=False, transform=transforms.ToTensor()),
+    datasets.MNIST('./data', train=False, transform=transforms.ToTensor()),
     batch_size=batch_size, shuffle=False)
 
 
@@ -174,3 +175,15 @@ generate = model.decoder(sample)[0].view(28,28)
 #展示生成数据
 plt.matshow(generate.cpu().detach().numpy())
 plt.show()
+
+
+def viz_rand_sample(sample):
+    h = 1
+    x = torch.arange(-3,3,h)
+    y = []
+    for i in range(len(x)):
+        # y.append(sum(torch.logical_and(sample[0] <= x[i+1]-h/2, sample[0] > x[i]+h/2)).cpu())
+        y.append(sum(torch.logical_and(sample <= x[i] + h/2, sample > x[i] - h/2)).cpu())
+
+    import matplotlib.pyplot as plt
+    plt.bar(x, y,width=h/2-0.1)
